@@ -10,7 +10,7 @@ namespace Common.Database.Extensions;
 /// </summary>
 public static partial class EntityExtensions
 {
-    public static void RemoveRange<TEntity>(this IEnumerable<TEntity> enumerable, DbContext? dbContext = null)
+    public static void RemoveRange<TEntity>(this IEnumerable<TEntity>? enumerable, DbContext? dbContext = null)
         where TEntity : Entity<TEntity>
     {
         enumerable ??= Array.Empty<TEntity>();

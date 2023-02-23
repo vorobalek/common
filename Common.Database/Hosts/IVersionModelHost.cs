@@ -13,9 +13,9 @@ public interface IVersionModelHost<THost, TKey, TModel> : IEntityHost<TModel>
     where TModel : Entity<TModel>, IVersionModelHost<THost, TKey, TModel>, new()
 {
     int Number { get; set; }
-    TKey EntityId { get; set; }
-    THost Entity { get; set; }
-    THost Serialized { get; set; }
+    TKey? EntityId { get; set; }
+    THost? Entity { get; set; }
+    THost? Serialized { get; set; }
 }
 
 public sealed class
@@ -45,7 +45,6 @@ public sealed class
         var jsonSerializerSettings = new JsonSerializerSettings
         {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            //DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
         };
 
         builder.Entity<TModel>()

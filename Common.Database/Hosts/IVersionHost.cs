@@ -13,7 +13,7 @@ public interface IVersionHost<THost, TKey, TModel> : IEntityHost<THost>
     where TKey : IEquatable<TKey>
     where TModel : Entity<TModel>, IVersionModelHost<THost, TKey, TModel>, new()
 {
-    ICollection<TModel> Versions { get; }
+    ICollection<TModel>? Versions { get; }
 }
 
 public sealed class
@@ -22,22 +22,18 @@ public sealed class
     where TKey : IEquatable<TKey>
     where TModel : Entity<TModel>, IVersionModelHost<THost, TKey, TModel>, new()
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly IEntityChangeListenerServiceCache _changeListenerServiceCache;
+    private readonly IEnumerable<IEntityChangeListener<TModel>> _listeners;
 
-    public VersionHostChangeListener(
-        IServiceProvider serviceProvider,
-        IEntityChangeListenerServiceCache changeListenerServiceCache)
+    public VersionHostChangeListener(IEnumerable<IEntityChangeListener<TModel>> listeners)
     {
-        _serviceProvider = serviceProvider;
-        _changeListenerServiceCache = changeListenerServiceCache;
+        _listeners = listeners;
     }
 
     public override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 
-        foreach (var listener in _changeListenerServiceCache.GetListeners<TModel>()) listener.OnModelCreating(builder);
+        foreach (var listener in _listeners) listener.OnModelCreating(builder);
     }
 
     public override void AfterSave(EntityChange<THost> change)

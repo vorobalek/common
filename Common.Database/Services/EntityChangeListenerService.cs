@@ -1,28 +1,29 @@
-using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using Common.Database.Infrastructure;
 using Common.Database.Infrastructure.Extensions;
 using Common.Database.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.Database.Services;
 
 public class EntityChangeListenerService<TContext> : IEntityChangeListenerService<TContext>
     where TContext : DbContext, ICommonDbContext<TContext>
 {
-    private readonly IEntityChangeListenerServiceCache _cache;
+    private readonly IEnumerable<IEntityChangeListener> _listeners;
     private readonly ConcurrentQueue<EntityChange> _entriesCache;
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
     private TContext? _dbContext;
 
     public EntityChangeListenerService(
-        IEntityChangeListenerServiceCache cache,
-        IServiceProvider serviceProvider)
+        IEnumerable<IEntityChangeListener> listeners, 
+        IServiceScopeFactory serviceScopeFactory)
     {
-        _cache = cache;
-        _serviceProvider = serviceProvider;
+        _listeners = listeners;
+        _serviceScopeFactory = serviceScopeFactory;
         _entriesCache = new ConcurrentQueue<EntityChange>();
     }
 
@@ -46,8 +47,7 @@ public class EntityChangeListenerService<TContext> : IEntityChangeListenerServic
 
     public void OnModelCreating(TContext dbContext, ModelBuilder modelBuilder)
     {
-        var listeners = _cache.GetListeners();
-        foreach (var listener in listeners)
+        foreach (var listener in _listeners)
         {
             var targetType = listener.TargetType;
             if (dbContext.GetType().GetProperties()
@@ -63,7 +63,7 @@ public class EntityChangeListenerService<TContext> : IEntityChangeListenerServic
         var entries = dbContext.ChangeTracker.Entries().ToList();
         foreach (var entry in entries)
             if (entry.Entity is IEntity model &&
-                _cache.GetListeners(model.GetType()) is { } listeners)
+                _listeners.Where(listener => listener.TargetType == model.GetType()) is { } listeners)
             {
                 var change = new EntityChange(entry);
                 foreach (var listener in listeners) listener.BeforeSave(change);
@@ -75,14 +75,14 @@ public class EntityChangeListenerService<TContext> : IEntityChangeListenerServic
     {
         if (sender is not TContext dbContext) return;
 
-        dbContext.UseNewContextAsync(_serviceProvider, async newContext =>
+        dbContext.UseNewContextAsync(_serviceScopeFactory, async newContext =>
         {
             var needSaveInNewContext = false;
 
             while (!_entriesCache.IsEmpty)
                 if (_entriesCache.TryDequeue(out var change))
                     if (change.Entity is IEntity model &&
-                        _cache.GetListeners(model.GetType()) is { } listeners)
+                        _listeners.Where(listener => listener.TargetType == model.GetType()) is { } listeners)
                         foreach (var listener in listeners)
                         {
                             change.NewContext = newContext;
@@ -99,14 +99,14 @@ public class EntityChangeListenerService<TContext> : IEntityChangeListenerServic
     {
         if (sender is not TContext dbContext) return;
 
-        dbContext.UseNewContextAsync(_serviceProvider, async newContext =>
+        dbContext.UseNewContextAsync(_serviceScopeFactory, async newContext =>
         {
             var needSaveInNewContext = false;
 
             while (!_entriesCache.IsEmpty)
                 if (_entriesCache.TryDequeue(out var change))
                     if (change.Entity is IEntity model &&
-                        _cache.GetListeners(model.GetType()) is { } listeners)
+                        _listeners.Where(listener => listener.TargetType == model.GetType()) is { } listeners)
                         foreach (var listener in listeners)
                         {
                             change.NewContext = newContext;

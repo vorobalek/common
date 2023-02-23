@@ -27,7 +27,6 @@ public static class ServiceCollectionExtensions
             .AddEntityChangeListeners(assemblies)
             .AddEntityTraitChangeListeners(assemblies)
             .AddEntityHostChangeListeners(assemblies)
-            .AddSingleton<IEntityChangeListenerServiceCache, EntityChangeListenerServiceCache>()
             .AddScoped<IEntityChangeListenerService<TContext>, EntityChangeListenerService<TContext>>();
         return services;
     }
@@ -142,7 +141,7 @@ public static class ServiceCollectionExtensions
                 if (type.GetInterface(host.Name) == null ||
                     type.GetInterface(host.Name)!.GetGenericArguments().Any(a => a.IsGenericParameter))
                     throw new ArgumentException(
-                        $"The {type.FullName} can not contains interfaces with undefined generic arguments");
+                        $"The {type.FullName} cannot contains interfaces with undefined generic arguments");
 
                 if (!listener.Type.ContainsGenericParameters ||
                     listener.Type.GetGenericArguments().Count(a => a.IsGenericParameter) !=
@@ -173,14 +172,14 @@ public static class ServiceCollectionExtensions
         if (!services.Any(s =>
                 s.ServiceType == typeof(IEntityChangeListener) &&
                 s.ImplementationType == typeOfEntityChangeListener))
-            services.AddTransient(
+            services.AddScoped(
                 typeof(IEntityChangeListener),
                 typeOfEntityChangeListener);
 
         if (!services.Any(s =>
                 s.ServiceType == typeof(IEntityChangeListener<>).MakeGenericType(typeOfEntity) &&
                 s.ImplementationType == typeOfEntityChangeListener))
-            services.AddTransient(
+            services.AddScoped(
                 typeof(IEntityChangeListener<>).MakeGenericType(typeOfEntity),
                 typeOfEntityChangeListener);
 
