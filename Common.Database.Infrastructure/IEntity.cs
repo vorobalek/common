@@ -1,7 +1,5 @@
+namespace Common.Database.Infrastructure;
 
-namespace Common.Database.Infrastructure
+public interface IEntity
 {
-    public interface IEntity
-    {
-    }
 }

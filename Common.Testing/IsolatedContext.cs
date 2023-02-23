@@ -1,47 +1,46 @@
 using System;
 using System.Dynamic;
 
-namespace Common.Testing
+namespace Common.Testing;
+
+public class IsolatedContext
 {
-    public class IsolatedContext
+    private readonly dynamic _context;
+
+    public IsolatedContext()
     {
-        private readonly dynamic _context;
+        _context = new ExpandoObject();
+    }
 
-        public IsolatedContext()
+    public T? Get<T>(Func<dynamic, dynamic> func, T? defaultValue = default)
+    {
+        try
         {
-            _context = new ExpandoObject();
+            var value = func.Invoke(_context);
+            return (T)value;
         }
+        catch (Exception)
+        {
+            return defaultValue;
+        }
+    }
 
-        public T Get<T>(Func<dynamic, dynamic> func, T defaultValue = default)
+    public bool Get<T>(Func<dynamic, dynamic> func, out T? value, T? defaultValue = default)
+    {
+        try
         {
-            try
-            {
-                var value = func.Invoke(_context);
-                return (T)value;
-            }
-            catch (Exception)
-            {
-                return defaultValue;
-            }
+            value = (T)func.Invoke(_context);
+            return true;
         }
+        catch (Exception)
+        {
+            value = defaultValue;
+            return false;
+        }
+    }
 
-        public bool Get<T>(Func<dynamic, dynamic> func, out T value, T defaultValue = default)
-        {
-            try
-            {
-                value = (T)func.Invoke(_context);
-                return true;
-            }
-            catch (Exception)
-            {
-                value = defaultValue;
-                return false;
-            }
-        }
-
-        public void Set(Action<dynamic> action)
-        {
-            action.Invoke(_context);
-        }
+    public void Set(Action<dynamic> action)
+    {
+        action.Invoke(_context);
     }
 }

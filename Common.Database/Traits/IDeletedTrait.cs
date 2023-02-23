@@ -31,7 +31,7 @@ namespace Common.Database.Traits
             base.BeforeDeleted(change);
 
             if (change.Entity.ForceDeleted) return;
-            
+
             change.Entity.Deleted = true;
             change.EntityEntry.State = EntityState.Modified;
         }
@@ -54,19 +54,16 @@ namespace Common.Database.Extensions
         {
             enumerable ??= Array.Empty<TEntity>();
             var entities = enumerable as TEntity[] ?? enumerable.ToArray();
-            foreach (var entity in entities)
-            {
-                entity.MarkAsForceDeleted();
-            }
+            foreach (var entity in entities) entity.MarkAsForceDeleted();
             return entities;
         }
-        
+
         public static IEnumerable<TEntity> NotDeleted<TEntity>(this IEnumerable<TEntity> enumerable)
             where TEntity : IDeletedTrait
         {
             return enumerable.Where(x => !x.Deleted);
         }
-        
+
         public static IQueryable<TEntity> NotDeleted<TEntity>(this IQueryable<TEntity> queryable)
             where TEntity : IDeletedTrait
         {

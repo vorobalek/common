@@ -1,12 +1,12 @@
 using Microsoft.Extensions.Configuration;
 
-namespace Common.Testing.Extensions
+namespace Common.Testing.Extensions;
+
+public static class ConfigurationBuilderExtensions
 {
-    public static class ConfigurationBuilderExtensions
+    public static IConfigurationBuilder AddTestConfiguration(this IConfigurationBuilder builder,
+        AddTestConfiguration addTestConfiguration)
     {
-        public static IConfigurationBuilder AddTestConfiguration(this IConfigurationBuilder builder, AddTestConfiguration addTestConfiguration)
-        {
-            return builder.Add(new TestConfigurationSource(addTestConfiguration));
-        }
+        return builder.Add(new TestConfigurationSource(addTestConfiguration));
     }
 }

@@ -1,7 +1,6 @@
-namespace Common.Database.Infrastructure
+namespace Common.Database.Infrastructure;
+
+public interface IEntityHost<TEntity> : IEntity
+    where TEntity : class, IEntityHost<TEntity>, new()
 {
-    public interface IEntityHost<TEntity> : IEntity
-        where TEntity : class, IEntityHost<TEntity>, new()
-    {
-    }
 }

@@ -7,59 +7,59 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Newtonsoft.Json;
 
-namespace Common.Database
+namespace Common.Database;
+
+public abstract class Entity : IEntity
 {
-    public abstract class Entity : IEntity
+    [JsonIgnore] [NotMapped] public DbContext? DbContext { get; internal set; }
+
+    [JsonIgnore] [NotMapped] public EntityEntry? EntityEntry { get; internal set; }
+
+    private ILazyLoader? _lazyLoader;
+
+    private ILazyLoader? LazyLoader
     {
-        [JsonIgnore, NotMapped]
-        public DbContext DbContext { get; internal set; }
-        
-        [JsonIgnore, NotMapped]
-        public EntityEntry EntityEntry { get; internal set; }
-
-        private ILazyLoader _lazyLoader;
-        private ILazyLoader LazyLoader
-        {
-            get => _lazyLoader ??= DbContext?.GetService<ILazyLoader>();
-            set => _lazyLoader = value;
-        }
-        
-        protected TRelated Lazy<TRelated>(
-            ref TRelated navigationField,
-            [CallerMemberName] string navigationName = null) 
-            where TRelated : class
-        {
-            // ReSharper disable once AssignNullToNotNullAttribute
-            return navigationField ??= LazyLoader?.Load(this, ref navigationField, navigationName);
-        }
-
-        public abstract void Update(DbContext dbContext = null);
-
-        public abstract void Remove(DbContext dbContext = null);
+        get => _lazyLoader ??= DbContext?.GetService<ILazyLoader>();
+        set => _lazyLoader = value;
     }
 
-    public abstract class Entity<TEntity> : Entity
-        where TEntity : Entity<TEntity>
+    protected TRelated? Lazy<TRelated>(
+        ref TRelated? navigationField,
+        [CallerMemberName] string navigationName = "")
+        where TRelated : class
     {
-        public sealed override void Update(DbContext dbContext = null)
-        {
-            var context = dbContext ?? this.DbContext;
-            context.Update(this);
-        }
+        // ReSharper disable once AssignNullToNotNullAttribute
+        return navigationField ??= LazyLoader?.Load(this, ref navigationField, navigationName);
+    }
 
-        public sealed override void Remove(DbContext dbContext = null)
-        {
-            var context = dbContext ?? this.DbContext;
-            BeforeRemove(context);
-            if (CanBeRemoved(context))
-                context.Remove(this);
-        }
+    public abstract void Update(DbContext? dbContext = null);
 
-        protected virtual void BeforeRemove(DbContext context)
-        {
-        }
+    public abstract void Remove(DbContext? dbContext = null);
+}
 
-        protected virtual bool CanBeRemoved(DbContext context) => 
-            context?.Set<TEntity>()?.Local?.Contains(this) ?? false;
+public abstract class Entity<TEntity> : Entity
+    where TEntity : Entity<TEntity>
+{
+    public sealed override void Update(DbContext? dbContext = null)
+    {
+        var context = dbContext ?? DbContext;
+        context!.Update(this);
+    }
+
+    public sealed override void Remove(DbContext? dbContext = null)
+    {
+        var context = dbContext ?? DbContext;
+        BeforeRemove(context);
+        if (CanBeRemoved(context))
+            context!.Remove(this);
+    }
+
+    protected virtual void BeforeRemove(DbContext? context)
+    {
+    }
+
+    protected virtual bool CanBeRemoved(DbContext? context)
+    {
+        return context?.Set<TEntity>().Local.Contains(this) ?? false;
     }
 }

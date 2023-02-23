@@ -12,7 +12,8 @@ namespace Common.Database.Traits
         public TKey DeletedBy { get; set; }
     }
 
-    public abstract class DeletedByChangeListener<TEntity, TKey> : EntityTraitChangeListener<TEntity, IDeletedByTrait<TKey>>
+    public abstract class
+        DeletedByChangeListener<TEntity, TKey> : EntityTraitChangeListener<TEntity, IDeletedByTrait<TKey>>
         where TEntity : class, IDeletedByTrait<TKey>
     {
         protected override void OnModelCreating(EntityTypeBuilder<TEntity> builder)
@@ -37,13 +38,13 @@ namespace Common.Database.Extensions
         public static IEnumerable<TEntity> DeletedBy<TEntity, TKey>(this IEnumerable<TEntity> enumerable, TKey key)
             where TEntity : IDeletedByTrait<TKey>
         {
-            return enumerable.Where(x => x.DeletedBy.Equals(key));
+            return enumerable.Where(x => x.DeletedBy != null && x.DeletedBy.Equals(key));
         }
-        
+
         public static IQueryable<TEntity> DeletedBy<TEntity, TKey>(this IQueryable<TEntity> enumerable, TKey key)
             where TEntity : IDeletedByTrait<TKey>
         {
-            return enumerable.Where(x => x.DeletedBy.Equals(key));
+            return enumerable.Where(x => x.DeletedBy != null && x.DeletedBy.Equals(key));
         }
     }
 }
