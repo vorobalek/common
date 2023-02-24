@@ -7,8 +7,6 @@ namespace Common.Database.Infrastructure;
 public class PropertyChange
 {
     private readonly object? _entryOriginalValue;
-    private PropertyEntry PropertyEntry { get; }
-    private EntityChange EntityChange { get; }
 
     public PropertyChange(PropertyEntry property, EntityChange entityChange)
     {
@@ -22,6 +20,9 @@ public class PropertyChange
         propertyChange.EntityChange)
     {
     }
+
+    private PropertyEntry PropertyEntry { get; }
+    private EntityChange EntityChange { get; }
 
     public string Name { get; }
 
@@ -48,15 +49,14 @@ public class PropertyChange
 
 public class PropertyChange<T> : PropertyChange
 {
+    public PropertyChange(PropertyChange propertyChange) : base(propertyChange)
+    {
+    }
+
     public new T? Value => (T?)base.Value;
 
     public new T? OriginalValue =>
         base.OriginalValue == null
             ? default
             : (T)base.OriginalValue;
-
-
-    public PropertyChange(PropertyChange propertyChange) : base(propertyChange)
-    {
-    }
 }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Common.Database.Extensions;
 
 /// <summary>
-/// Aggregated class for whole traits extensions
+///     Aggregated class for whole traits extensions
 /// </summary>
 public static partial class EntityExtensions
 {

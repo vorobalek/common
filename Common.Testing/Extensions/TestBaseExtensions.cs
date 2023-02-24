@@ -47,20 +47,22 @@ public static class TestBaseExtensions
 
         try
         {
-            await testBase.PrepareAsync(cancellationToken);
-            if (configuration.PrepareAsync != default) await configuration.PrepareAsync(context, cancellationToken);
-            await actionAsync(context, cancellationToken);
+            await testBase.PrepareAsync(cancellationToken).ConfigureAwait(false);
+            if (configuration.PrepareAsync != default)
+                await configuration.PrepareAsync(context, cancellationToken).ConfigureAwait(false);
+            await actionAsync(context, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception exception)
         {
             if (configuration.HandleExceptionAsync != default)
-                await configuration.HandleExceptionAsync(context, exception, cancellationToken);
+                await configuration.HandleExceptionAsync(context, exception, cancellationToken).ConfigureAwait(false);
             throw;
         }
         finally
         {
-            if (configuration.FinalizeAsync != default) await configuration.FinalizeAsync(context, cancellationToken);
-            await testBase.FinalizeAsync(cancellationToken);
+            if (configuration.FinalizeAsync != default)
+                await configuration.FinalizeAsync(context, cancellationToken).ConfigureAwait(false);
+            await testBase.FinalizeAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }

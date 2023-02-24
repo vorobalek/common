@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -11,11 +12,10 @@ namespace Common.Database;
 
 public abstract class Entity : IEntity
 {
+    private ILazyLoader? _lazyLoader;
     [JsonIgnore] [NotMapped] public DbContext? DbContext { get; internal set; }
 
     [JsonIgnore] [NotMapped] public EntityEntry? EntityEntry { get; internal set; }
-
-    private ILazyLoader? _lazyLoader;
 
     private ILazyLoader? LazyLoader
     {
@@ -29,7 +29,7 @@ public abstract class Entity : IEntity
         where TRelated : class
     {
         // ReSharper disable once AssignNullToNotNullAttribute
-        return navigationField ??= LazyLoader?.Load(this, ref navigationField, navigationName);
+        return LazyLoader?.Load(this, ref navigationField, navigationName);
     }
 
     public abstract void Update(DbContext? dbContext = null);
@@ -42,13 +42,17 @@ public abstract class Entity<TEntity> : Entity
 {
     public sealed override void Update(DbContext? dbContext = null)
     {
-        var context = dbContext ?? DbContext;
-        context!.Update(this);
+        var context = dbContext
+                      ?? DbContext
+                      ?? throw new InvalidOperationException("Unable to access DbContext");
+        context.Update(this);
     }
 
     public sealed override void Remove(DbContext? dbContext = null)
     {
-        var context = dbContext ?? DbContext;
+        var context = dbContext
+                      ?? DbContext
+                      ?? throw new InvalidOperationException("Unable to access DbContext");
         BeforeRemove(context);
         if (CanBeRemoved(context))
             context!.Remove(this);

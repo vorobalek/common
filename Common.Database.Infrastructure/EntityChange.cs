@@ -11,21 +11,9 @@ namespace Common.Database.Infrastructure;
 
 public class EntityChange
 {
+    private DbContext? _newContext;
     private object? _originalEntity;
     private IReadOnlyDictionary<string, PropertyChange>? _properties;
-
-    public EntityEntry EntityEntry { get; }
-    public DbContext Context => EntityEntry.Context;
-
-    private DbContext? _newContext;
-
-    public virtual DbContext NewContext
-    {
-        get => _newContext ?? Context;
-        set => _newContext = value;
-    }
-
-    public virtual bool NeedSaveInNewContext { get; set; }
 
     public EntityChange(EntityEntry entry)
     {
@@ -41,6 +29,17 @@ public class EntityChange
         OriginalValues = entityChange.OriginalValues;
         _properties = entityChange._properties;
     }
+
+    public EntityEntry EntityEntry { get; }
+    public DbContext Context => EntityEntry.Context;
+
+    public virtual DbContext NewContext
+    {
+        get => _newContext ?? Context;
+        set => _newContext = value;
+    }
+
+    public virtual bool NeedSaveInNewContext { get; set; }
 
     public EntityState State { get; }
     public Type EntityType => EntityEntry.Metadata.ClrType;

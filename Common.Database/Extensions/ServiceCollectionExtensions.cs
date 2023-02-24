@@ -2,9 +2,9 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Common.Database.Infrastructure;
-using Common.Infrastructure.Extensions;
 using Common.Database.Infrastructure.Services;
 using Common.Database.Services;
+using Common.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

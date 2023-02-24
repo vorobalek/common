@@ -23,18 +23,18 @@ public abstract class TestBase<TStartup> :
     IClassFixture<WebApplicationFactory<TStartup>>
     where TStartup : class
 {
+    private readonly WebApplicationFactory<TStartup> _sharedFactory;
+    private AddTestConfiguration _addTestConfiguration = _ => { };
+    private HttpClient? _client;
+    private WebApplicationFactory<TStartup>? _factory;
+    private string? _pathToSolutionRoot;
+    private IServiceProvider? _serviceProvider;
+    private IServiceScope? _serviceScope;
+
     protected TestBase(WebApplicationFactory<TStartup> sharedFactory)
     {
         _sharedFactory = sharedFactory;
     }
-
-    private readonly WebApplicationFactory<TStartup> _sharedFactory;
-    private AddTestConfiguration _addTestConfiguration = _ => { };
-    private WebApplicationFactory<TStartup>? _factory;
-    private IServiceProvider? _serviceProvider;
-    private IServiceScope? _serviceScope;
-    private HttpClient? _client;
-    private string? _pathToSolutionRoot;
 
     private IServiceProvider ServiceProvider => _serviceProvider ??= CreateScopedServiceProvider();
 

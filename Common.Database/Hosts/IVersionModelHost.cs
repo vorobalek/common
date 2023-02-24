@@ -2,6 +2,7 @@ using System;
 using Common.Database.Infrastructure;
 using Common.Database.Services;
 using Common.Database.Traits;
+using Common.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -13,8 +14,7 @@ public interface IVersionModelHost<THost, TKey, TModel> : IEntityHost<TModel>
     where TModel : Entity<TModel>, IVersionModelHost<THost, TKey, TModel>, new()
 {
     int Number { get; set; }
-    TKey? EntityId { get; set; }
-    THost? Entity { get; set; }
+    TKey EntityId { get; set; }
     THost? Serialized { get; set; }
 }
 
@@ -37,10 +37,8 @@ public sealed class
             .ValueGeneratedOnAdd();
 
         builder.Entity<TModel>()
-            .HasOne(e => e.Entity)
-            .WithMany(e => e.Versions)
-            .HasForeignKey(e => e.EntityId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasIndex(e => e.EntityId)
+            .IsUnique(false);
 
         var jsonSerializerSettings = new JsonSerializerSettings
         {
@@ -50,8 +48,12 @@ public sealed class
         builder.Entity<TModel>()
             .Property(e => e.Serialized)
             .HasConversion(
-                v => JsonConvert.SerializeObject(v, jsonSerializerSettings),
-                v => JsonConvert.DeserializeObject<THost>(v, jsonSerializerSettings)!);
+                v => ExecutionHelper
+                    .TryIgnore(() =>
+                        JsonConvert.SerializeObject(v, jsonSerializerSettings)),
+                v => ExecutionHelper
+                    .TryIgnore(() =>
+                        JsonConvert.DeserializeObject<THost>(v ?? string.Empty, jsonSerializerSettings)));
 
         var hostTableName = builder.Entity<THost>().Metadata.GetTableName();
 

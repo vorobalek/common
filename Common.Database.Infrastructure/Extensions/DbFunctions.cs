@@ -38,7 +38,7 @@ public static class DbFunctions
     }
 
     /// <summary>
-    /// Use only in ef queries. Make sure than @@DATEFIRST in your database is 7
+    ///     Use only in ef queries. Make sure than @@DATEFIRST in your database is 7
     /// </summary>
     /// <param name="date"></param>
     /// <returns></returns>
@@ -49,7 +49,7 @@ public static class DbFunctions
     }
 
     /// <summary>
-    /// Use only in ef queries. Make sure than @@DATEFIRST in your database is 7
+    ///     Use only in ef queries. Make sure than @@DATEFIRST in your database is 7
     /// </summary>
     /// <param name="date"></param>
     /// <returns></returns>
@@ -60,7 +60,7 @@ public static class DbFunctions
     }
 
     /// <summary>
-    /// Use only in ef queries. Make sure than @@DATEFIRST in your database is 7
+    ///     Use only in ef queries. Make sure than @@DATEFIRST in your database is 7
     /// </summary>
     /// <param name="date"></param>
     /// <returns></returns>
@@ -71,7 +71,7 @@ public static class DbFunctions
     }
 
     /// <summary>
-    /// Use only in ef queries. Make sure than @@DATEFIRST in your database is 7
+    ///     Use only in ef queries. Make sure than @@DATEFIRST in your database is 7
     /// </summary>
     /// <param name="date"></param>
     /// <returns></returns>

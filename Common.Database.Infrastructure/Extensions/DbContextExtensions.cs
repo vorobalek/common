@@ -25,7 +25,8 @@ public static class DbContextExtensions
         context.SaveChangesFailed += context.EntityChangeListenerService.OnSaveChangesFailed;
     }
 
-    public static async Task UseNewContextAsync<TContext>(this TContext context, IServiceScopeFactory serviceScopeFactory,
+    public static async Task UseNewContextAsync<TContext>(this TContext context,
+        IServiceScopeFactory serviceScopeFactory,
         Func<TContext, Task> action)
         where TContext : DbContext
     {

@@ -13,13 +13,13 @@ namespace Common.Database.Services;
 public class EntityChangeListenerService<TContext> : IEntityChangeListenerService<TContext>
     where TContext : DbContext, ICommonDbContext<TContext>
 {
-    private readonly IEnumerable<IEntityChangeListener> _listeners;
     private readonly ConcurrentQueue<EntityChange> _entriesCache;
+    private readonly IEnumerable<IEntityChangeListener> _listeners;
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private TContext? _dbContext;
 
     public EntityChangeListenerService(
-        IEnumerable<IEntityChangeListener> listeners, 
+        IEnumerable<IEntityChangeListener> listeners,
         IServiceScopeFactory serviceScopeFactory)
     {
         _listeners = listeners;
@@ -91,7 +91,7 @@ public class EntityChangeListenerService<TContext> : IEntityChangeListenerServic
                         }
 
             if (needSaveInNewContext)
-                await newContext.SaveChangesAsync();
+                await newContext.SaveChangesAsync().ConfigureAwait(false);
         }).RunSync();
     }
 
@@ -115,7 +115,7 @@ public class EntityChangeListenerService<TContext> : IEntityChangeListenerServic
                         }
 
             if (needSaveInNewContext)
-                await newContext.SaveChangesAsync();
+                await newContext.SaveChangesAsync().ConfigureAwait(false);
         }).RunSync();
     }
 }

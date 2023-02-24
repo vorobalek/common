@@ -17,10 +17,6 @@ public abstract class EntityChangeListener<TEntity> : IEntityChangeListener<TEnt
         OnModelCreating(builder.Entity<TEntity>());
     }
 
-    protected virtual void OnModelCreating(EntityTypeBuilder<TEntity> builder)
-    {
-    }
-
     public void BeforeSave(EntityChange change)
     {
         if (change.Entity is TEntity) BeforeSave(change.AsEntityChanges<TEntity>());
@@ -94,6 +90,10 @@ public abstract class EntityChangeListener<TEntity> : IEntityChangeListener<TEnt
             default:
                 throw new ArgumentOutOfRangeException(nameof(change.State), change.State, null);
         }
+    }
+
+    protected virtual void OnModelCreating(EntityTypeBuilder<TEntity> builder)
+    {
     }
 
     protected virtual void BeforeDetached(EntityChange<TEntity> change)
