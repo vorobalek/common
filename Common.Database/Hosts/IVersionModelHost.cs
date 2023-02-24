@@ -40,7 +40,7 @@ public sealed class
             .HasOne(e => e.Entity)
             .WithMany(e => e.Versions)
             .HasForeignKey(e => e.EntityId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
 
         var jsonSerializerSettings = new JsonSerializerSettings
         {
