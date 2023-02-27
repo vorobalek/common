@@ -12,6 +12,10 @@ public abstract class EntityChangeListener<TEntity> : IEntityChangeListener<TEnt
 {
     public Type TargetType => typeof(TEntity);
 
+    public virtual void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+    }
+
     public virtual void OnModelCreating(ModelBuilder builder)
     {
         OnModelCreating(builder.Entity<TEntity>());

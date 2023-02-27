@@ -32,17 +32,15 @@ public class EntityChangeListenerService<TContext> : IEntityChangeListenerServic
         _dbContext = context;
     }
 
-    public void OnTracked(object? sender, EntityTrackedEventArgs e)
+    public void OnConfiguring(TContext dbContext, DbContextOptionsBuilder optionsBuilder)
     {
-        if (e.Entry.Entity is Entity entity)
+        foreach (var listener in _listeners)
         {
-            entity.DbContext = _dbContext;
-            entity.EntityEntry = e.Entry;
+            var targetType = listener.TargetType;
+            if (dbContext.GetType().GetProperties()
+                .Any(p => p.PropertyType == typeof(DbSet<>).MakeGenericType(targetType)))
+                listener.OnConfiguring(optionsBuilder);
         }
-    }
-
-    public void OnStateChanged(object? sender, EntityStateChangedEventArgs e)
-    {
     }
 
     public void OnModelCreating(TContext dbContext, ModelBuilder modelBuilder)
@@ -54,6 +52,19 @@ public class EntityChangeListenerService<TContext> : IEntityChangeListenerServic
                 .Any(p => p.PropertyType == typeof(DbSet<>).MakeGenericType(targetType)))
                 listener.OnModelCreating(modelBuilder);
         }
+    }
+
+    public void OnTracked(object? sender, EntityTrackedEventArgs e)
+    {
+        if (e.Entry.Entity is Entity entity)
+        {
+            entity.DbContext = _dbContext;
+            entity.EntityEntry = e.Entry;
+        }
+    }
+
+    public void OnStateChanged(object? sender, EntityStateChangedEventArgs e)
+    {
     }
 
     public void OnSavingChanges(object? sender, SavingChangesEventArgs e)

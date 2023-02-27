@@ -7,6 +7,8 @@ public interface IEntityChangeListener
 {
     Type TargetType { get; }
 
+    void OnConfiguring(DbContextOptionsBuilder optionsBuilder);
+
     void OnModelCreating(ModelBuilder builder);
 
     void BeforeSave(EntityChange change);

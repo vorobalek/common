@@ -7,6 +7,12 @@ namespace Common.Database.Infrastructure.Extensions;
 
 public static class DbContextExtensions
 {
+    public static void CommonConfiguring<TContext>(this TContext context, DbContextOptionsBuilder optionsBuilder)
+        where TContext : DbContext, ICommonDbContext<TContext>
+    {
+        context.EntityChangeListenerService.OnConfiguring(context, optionsBuilder);
+    }
+
     public static void CommonModelCreating<TContext>(this TContext context, ModelBuilder modelBuilder)
         where TContext : DbContext, ICommonDbContext<TContext>
     {
