@@ -42,8 +42,7 @@ public static class ServiceCollectionExtensions
 
         var listeners = types
             .Where(type => type.HasInterface(typeof(IEntityChangeListener<>)) &&
-                           !type.IsAbstract &&
-                           !type.IsGenericType)
+                           type is { IsAbstract: false, IsGenericType: false })
             .Distinct();
 
         foreach (var listener in listeners)

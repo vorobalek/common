@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Common.Database.Infrastructure.Extensions;
+namespace Common.Infrastructure.Extensions;
 
 public static class TaskExtensions
 {

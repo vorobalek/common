@@ -1,7 +1,7 @@
 using System;
 using System.Linq.Expressions;
 
-namespace Common.Database.Infrastructure.Linq;
+namespace Common.Infrastructure.Linq;
 
 public static class PredicateBuilder
 {
