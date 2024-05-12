@@ -20,7 +20,7 @@ public interface IVersionHost<THost, TKey, TModel> : IEntityHost<THost>
 
 public sealed class
     VersionHostChangeListener<THost, TKey, TModel> : EntityHostChangeListener<THost,
-        IVersionHost<THost, TKey, TModel>>
+    IVersionHost<THost, TKey, TModel>>
     where THost : Entity<THost>, IVersionHost<THost, TKey, TModel>, IIdTrait<TKey>, new()
     where TKey : IEquatable<TKey>
     where TModel : Entity<TModel>, IVersionModelHost<THost, TKey, TModel>, new()
@@ -56,7 +56,7 @@ public sealed class
     }
 }
 
-public static partial class EntityExtensions
+public static class EntityExtensions
 {
     public static TModel? GetPreviousVersion<THost, TKey, TModel>(this THost host, DbContext? dbContext = null)
         where THost : Entity<THost>, IVersionHost<THost, TKey, TModel>, IIdTrait<TKey>, new()

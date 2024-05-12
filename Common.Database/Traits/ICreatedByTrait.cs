@@ -29,7 +29,6 @@ public abstract class
     protected abstract TKey GetCreatedBy();
 }
 
-
 public static partial class EntityExtensions
 {
     public static IEnumerable<TEntity> CreatedBy<TEntity, TKey>(this IEnumerable<TEntity> enumerable, TKey key)

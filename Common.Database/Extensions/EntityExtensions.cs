@@ -8,7 +8,7 @@ namespace Common.Database.Extensions;
 /// <summary>
 ///     Aggregated class for whole traits extensions
 /// </summary>
-public static partial class EntityExtensions
+public static class EntityExtensions
 {
     public static void RemoveRange<TEntity>(this IEnumerable<TEntity>? enumerable, DbContext? dbContext = null)
         where TEntity : Entity<TEntity>

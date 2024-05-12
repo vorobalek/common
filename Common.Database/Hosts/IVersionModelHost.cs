@@ -20,7 +20,7 @@ public interface IVersionModelHost<THost, TKey, TModel> : IEntityHost<TModel>
 
 public sealed class
     VersionModelHostChangeListener<THost, TKey, TModel> : EntityHostChangeListener<TModel,
-        IVersionModelHost<THost, TKey, TModel>>
+    IVersionModelHost<THost, TKey, TModel>>
     where THost : Entity<THost>, IVersionHost<THost, TKey, TModel>, IIdTrait<TKey>, new()
     where TKey : IEquatable<TKey>
     where TModel : Entity<TModel>, IVersionModelHost<THost, TKey, TModel>, new()

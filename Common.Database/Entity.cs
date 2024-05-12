@@ -17,18 +17,13 @@ public abstract class Entity : IEntity
 
     [JsonIgnore] [NotMapped] public EntityEntry? EntityEntry { get; internal set; }
 
-    private ILazyLoader? LazyLoader
-    {
-        get => _lazyLoader ??= DbContext?.GetService<ILazyLoader>();
-        set => _lazyLoader = value;
-    }
+    private ILazyLoader? LazyLoader => _lazyLoader ??= DbContext?.GetService<ILazyLoader>();
 
     protected TRelated? Lazy<TRelated>(
         ref TRelated? navigationField,
         [CallerMemberName] string navigationName = "")
         where TRelated : class
     {
-        // ReSharper disable once AssignNullToNotNullAttribute
         return LazyLoader?.Load(this, ref navigationField, navigationName);
     }
 
@@ -55,7 +50,7 @@ public abstract class Entity<TEntity> : Entity
                       ?? throw new InvalidOperationException("Unable to access DbContext");
         BeforeRemove(context);
         if (CanBeRemoved(context))
-            context!.Remove(this);
+            context.Remove(this);
     }
 
     protected virtual void BeforeRemove(DbContext? context)
