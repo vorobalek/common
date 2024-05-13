@@ -5,7 +5,8 @@
         <Nullable>enable</Nullable>
         <LangVersion>12</LangVersion>
         <PackageId>vorobalek.Common.Database.Infrastructure</PackageId>
-        <Version>0.0.1</Version>
+        <Version Condition="'$(VersionSuffix)' != ''">0.0.2-$(VersionSuffix)</Version>
+        <Version Condition="'$(VersionSuffix)' == ''">0.0.2</Version>
         <Product>Common</Product>
         <Authors>Alexey Vorobev</Authors>
         <PackageProjectUrl>https://github.com/vorobalek/common</PackageProjectUrl>
