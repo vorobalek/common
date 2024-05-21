@@ -55,8 +55,10 @@ public sealed class
                     .TryIgnore(() =>
                         JsonConvert.DeserializeObject<THost>(v ?? string.Empty, jsonSerializerSettings)));
 
-        var hostTableName = builder.Entity<THost>().Metadata.GetTableName();
+        if (builder.Entity<TModel>().Metadata.GetTableName() != 
+            builder.Entity<TModel>().Metadata.GetDefaultTableName()) return;
 
+        var hostTableName = builder.Entity<THost>().Metadata.GetTableName();
         builder.Entity<TModel>()
             .ToTable($"{hostTableName}_Versions");
     }
